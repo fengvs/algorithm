@@ -1,0 +1,44 @@
+标题：方格分割
+
+6x6的方格，沿着格子的边线剪开成两部分。
+要求这两部分的形状完全相同。
+
+如图：p1.png, p2.png, p3.png 就是可行的分割法。
+
+试计算：
+包括这3种分法在内，一共有多少种不同的分割方法。
+注意：旋转对称的属于同一种分割法。
+
+请提交该整数，不要填写任何多余的内容或说明文字。
+
+
+#include<cstdio>
+using namespace std;
+const int N = 6;
+const int d[4][2] = {1,0,-1,0,0,1,0,-1};
+
+int ans=0, vis[N][N];
+void dfs(int x,int y){
+	if(x==0 || y==0 || x==N || y==N){
+		ans++;
+		return ;
+	}
+	for(int i=0; i<4; i++){
+		int xx = x+d[i][0];
+		int yy = y+d[i][1];
+		if(!vis[xx][yy]){
+			vis[xx][yy] = 1;
+			vis[N-xx][N-yy] = 1;
+			dfs(xx,yy);
+			vis[xx][yy] = 0;
+			vis[N-xx][N-yy] = 0;
+		}
+	}
+}
+int main()
+{
+	//方格分割 
+	vis[3][3] = 1;
+	dfs(3,3);
+	printf("%.2f\n", ans/4.0);
+} 

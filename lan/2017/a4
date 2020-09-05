@@ -1,0 +1,83 @@
+第四题：找环
+
+ 
+
+题意：
+
+编号为1到n的n个点，以及n-1条边构成一棵树。现在在树上加上一条边，这样就构成了一个含环的图了。请你找出该环上的结点，从小到大输出这些结点编号。
+
+测试数据：
+
+30%数据：n<1000
+
+100%数据：n<100000
+
+
+
+#include<cstdio>
+#include<vector>
+#include<queue> 
+#include<cstring>
+using namespace std;
+const int N = 100000+5;
+
+vector<int> v[N];
+int d[N], n;
+queue<int> q;
+/*
+将度数为1的点删除，并将与它相邻的点度数减一 
+*/
+void solve()
+{
+	while(!q.empty()){
+		q.pop();
+	}
+	for(int i=1; i<=n; i++){
+		if(d[i] == 1){
+			q.push(i);
+			d[i]--;
+		}
+	}
+	while(!q.empty()){
+		int x = q.front();
+		q.pop();
+		int len = v[x].size();
+		for(int i=0; i<len; i++){
+			int to = v[x][i];
+			d[to]--;
+			if(d[to] == 1){
+				q.push(to);
+			}
+		}
+	}
+}
+void out()
+{
+	bool flag = false;
+	for(int i=1; i<=n; i++){
+		if(d[i] > 1){
+			if(flag){
+				printf(" %d", i);
+			}else{
+				printf("%d", i);
+				flag = true;
+			}
+		}
+	}
+	printf("\n");
+}
+int main()
+{
+	scanf("%d", &n);
+	memset(d,0,sizeof(d));
+	for(int i=0; i<n; i++){
+		int a,b;
+		scanf("%d%d", &a,&b);
+		v[a].push_back(b);
+		v[b].push_back(a);
+		d[a]++;
+		d[b]++;
+	}
+	solve();
+	out();
+}
