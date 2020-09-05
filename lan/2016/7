@@ -1,0 +1,107 @@
+剪邮票
+如【图1.jpg】, 有12张连在一起的12生肖的邮票。
+现在你要从中剪下5张来，要求必须是连着的。
+（仅仅连接一个角不算相连）
+比如，【图2.jpg】，【图3.jpg】中，粉红色所示部分就是合格的剪取。
+请你计算，一共有多少种不同的剪取方法。
+
+
+
+请填写表示方案数目的整数。
+注意：你提交的应该是一个整数，不要填写任何多余的内容或说明性文字。
+
+
+#include<cstdio>
+#include<cstring>
+#include<set>
+#include<queue>
+using namespace std;
+
+int d[4][2] = {0,1,0,-1,1,0,-1,0};
+//int vis[3][4];
+int ans=0;
+int a[5];
+set<int> st;
+int fx(int x){
+	return x/4;
+}
+int fy(int y){
+	return y%4;
+}
+bool bfs(){
+	st.clear();
+	for(int i=1; i<5; i++){
+		st.insert(a[i]);
+	}
+	//memset(vis,0,sizeof(vis));
+	//vis[fx(a[0])][fy(a[0])] = 1;
+	queue<int> q;
+	q.push(a[0]);
+	while(!q.empty()){
+		int m = q.front();
+		q.pop();
+		int x = fx(m);
+		int y = fy(m);
+		for(int i=0; i<4; i++){
+			int xx = x+d[i][0];
+			int yy = y+d[i][1];
+			if(xx>=0&&xx<3&&yy>=0&&yy<4 && st.find(xx*4+yy)!=st.end()){
+				//vis[xx][yy] = 1;
+				st.erase(xx*4+yy);
+				q.push(xx*4+yy);
+			}
+		}
+	}
+	return st.empty();
+}
+void dfs(int x,int k){ //选出来五个数
+	if(x==12 || k==5){
+		if(k==5 && bfs()){ //bfs判断五个数是否相连
+			ans++;
+		}
+		return ;
+	}
+	dfs(x+1,k);
+	a[k] = x;
+	dfs(x+1,k+1);
+}
+int main()
+{
+	//剪邮票 
+	dfs(0,0);
+	printf("%d\n", ans);
+}
+
+/*剪邮票 
+有错
+0 1 0 0
+1 1 1 0
+0 1 0 0 
+int d[4][2] = {0,1,0,-1,1,0,-1,0};
+int vis[3][4], ans=0;
+void dfs(int x,int y,int k){
+	if(k == 5){
+		ans++;
+		return ;
+	}
+	for(int i=0; i<4; i++){
+		int xx = x+d[i][0];
+		int yy = y+d[i][1];
+		if(xx>=0&&xx<3&&yy>=0&&yy<4 && vis[xx][yy]==0){
+			vis[xx][yy] = 1;
+			dfs(xx,yy,k+1);
+			vis[xx][yy] = 0;
+		}
+	}
+}
+int main()
+{
+	memset(vis,0,sizeof(vis));
+	for(int i=0; i<3; i++){
+		for(int j=0; j<4; j++){
+			dfs(i,j,0);
+			vis[i][j] = 1;
+		}
+	}
+	printf("%d\n", ans);
+} */

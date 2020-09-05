@@ -1,0 +1,86 @@
+方格填数
+如下的10个格子
+
+填入0~9的数字。要求：连续的两个数字不能相邻。
+（左右、上下、对角都算相邻）
+一共有多少种可能的填数方案？
+ 000
+0000
+000
+请填写表示方案数目的整数。
+注意：你提交的应该是一个整数，不要填写任何多余的内容或说明性文字。
+
+【答案】1580
+
+#include<cstdio>
+#include<algorithm>
+#include<cmath>
+#include<cstring>
+using namespace std;
+
+int a[10] = {0,1,2,3,4,5,6,7,8,9};
+int mp[3][4];
+int c[3][2] = {1,4,0,4,0,3};
+int d[8][2] = {-1,0,-1,1,-1,-1, 0,1,0,-1, 1,1,1,0,1,-1};
+bool check(){
+	for(int i=0; i<3; i++){
+		for(int j=0; j<4; j++){
+			for(int k=0; k<8; k++){
+				int x = i+d[k][0];
+				int y = j+d[k][1];
+				if(x>=0&&x<3&&y>=0&&y<4 && mp[i][j]!=-1 && mp[x][y]!=-1){
+					if((int)fabs(mp[i][j]-mp[x][y]) == 1){
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+int main() 
+{
+	//方格填数 
+	memset(mp,-1,sizeof(mp));
+	int ans = 0;
+	do{
+		int t = 0;
+		for(int i=0; i<3; i++){
+			for(int j=c[i][0]; j<c[i][1]; j++){
+				mp[i][j] = a[t++];
+			}
+		}
+		if(check()){
+			ans++;
+		}
+	}while(next_permutation(a,a+10));
+	printf("%d\n", ans);
+} 
+/*
+void f(int i, int j){  
+    if (i == 2&&j==3){//已经填入到最后一个说明这种情况满足，num++  
+        num++;  
+        return;  
+    }  
+        for (int k = 0; k <= 9; k++){  
+            if (pd(k, i, j)&&v[k]==0) {//判断8个方向是否能填入，并且是否用过  
+                v[k] = 1;  
+                a[i][j] = k;  
+                if (j == 3)//到达最后一列记得换行  
+                    f(i + 1, 0);  
+                else  
+                    f(i, j + 1);  
+                a[i][j] = -9;  
+                v[k] = 0;  
+            }  
+        }  
+}  
+int main(){  
+    for (int i = 0; i < 3; i++)//这里我将所有数赋值-9，因为第一个和最后一个不需要赋值，避免干扰  
+        for (int j = 0; j < 4; j++)  
+            a[i][j] = -9;  
+    f(0, 1);  
+    printf("%d", num);  
+    return 0;  
+}  
+*/
