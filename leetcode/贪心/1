@@ -1,0 +1,51 @@
+#55. 跳跃游戏
+
+给定一个非负整数数组，你最初位于数组的第一个位置。
+数组中的每个元素代表你在该位置可以跳跃的最大长度。
+判断你是否能够到达最后一个位置。
+
+解法：
+方法一：贪心
+尽可能到达最远位置，遍历数组，如果当前位置可以到达，并且当前位置+跳数>最远位置，则更新最远位置。最后当最远位置能够到达最后一个位置时，则返回true
+时间复杂度 O(n), 空间复杂度 O(1)
+
+方法二：动态规划
+dp[i] = {max(dp[i+1:i+arr[i]]), true if i+arr[i]>=len(arr)}
+即若当前位置+跳数>n，则为true；若i+1到i+跳数 中有true，则dp[i]也为true；否则dp[i]为false
+通过一些技巧优化时间复杂度，如代码所示
+时间复杂度 O(n), 空间复杂度 O(n)
+
+code
+方法一：
+class Solution:
+    def canJump(self, nums) :
+        max_i = 0       #初始化当前能到达最远的位置
+        for i, jump in enumerate(nums):   #i为当前位置，jump是当前位置的跳数
+            if max_i>=i and i+jump>max_i:  #如果当前位置能到达，并且当前位置+跳数>最远位置  
+                max_i = i+jump  #更新最远能到达位置
+        return max_i>=i
+
+方法二：
+public:
+    bool canJump(vector<int>& nums) {
+        int n = nums.size();
+        bool dp[n];
+        memset(dp, 0, sizeof(dp)); // 初始化
+        for(int i=n-1; i>=0; i--){
+            if(i + nums[i] >= n-1){
+                dp[i] = true;
+            }else{
+                dp[i] = dp[i+nums[i]]; // 因为之间的已更新过，可以直接看dp[i+nums[i]]
+            }
+            if(dp[i] == true){ // 优化技巧，时间复杂度将为O(n)
+                for(int j=i+1; j<=n-1; j++){
+                    if(dp[j] == true){
+                        break;
+                    }
+                    dp[j] = true;
+                }
+            }
+        }
+        return dp[0];
+    }
+};
