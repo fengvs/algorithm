@@ -1,0 +1,30 @@
+三羊献瑞
+观察下面的加法算式：
+
+
+其中，相同的汉字代表相同的数字，不同的汉字代表不同的数字。
+请你填写“三羊献瑞”所代表的4位数字（答案唯一），不要填写任何多余内容。
+
+
+
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+
+int a[10] = {0,1,2,3,4,5,6,7,8,9};
+int main()
+{
+	int b,c,d;
+	do{
+		b = a[0]*1000+a[1]*100+a[2]*10+a[3];
+		c = a[4]*1000+a[5]*100+a[6]*10+a[1];
+		d = a[4]*10000+a[5]*1000+a[2]*100+a[1]*10+a[7];
+		if(b>999 && c>999 && b+c==d){
+			break;
+		}
+	}while(next_permutation(a,a+10));
+	cout<<b<<" "<<c<<" "<<d<<endl;
+	return 0;
+}
