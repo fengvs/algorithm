@@ -1,0 +1,51 @@
+#62. 不同路径
+
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+问总共有多少条不同的路径？
+
+解法：
+方法一：排列组合
+向右和向下走的步数是固定的，向下n-1，向右m-1，C(m-1, m+n-2)
+
+方法二：动态规划
+dp[i][j] = dp[i-1][j] + dp[i][j-1]
+时间复杂度 O(n*m), 空间复杂度 O(n*m), 滚动数组优化空间为 O(m)
+
+
+code
+方法一：
+int C(int n,int m){
+    int res = 1,j=1;
+    for(int i=0;i<m;i++){
+        res *= (n-i);
+        while(j<=m && res%j==0){    //能除先除，避免溢出
+            res /= j;
+            j++;
+        }
+    }
+    return res;
+}
+int uniquePaths(int m, int n){
+    return C(m+n-2,(m<n?m:n)-1);    //取较小者作为C(n,m)中的m
+}
+
+方法二：
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        int dp[n+1][m+1];
+        memset(dp, 0, sizeof(dp));
+        dp[1][1] = 1;
+        for(int i=1; i<=n; i++){
+            for(int j=1; j<=m; j++){
+                if(i==1 && j==1){
+                    dp[i][j] = 1;
+                    continue;
+                }
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];  // 可用滚动数组优化
+            }
+        }
+        return dp[n][m];
+    }
+};
