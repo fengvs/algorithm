@@ -1,0 +1,88 @@
+#105. 从前序与中序遍历序列构造二叉树
+
+根据一棵树的前序遍历与中序遍历构造二叉树。
+注意: 你可以假设树中没有重复的元素。
+
+解法：
+方法一：递归
+根据中序遍历定位根节点，从而划分左右子树，递归构造
+时间复杂度 O(n*log(n)), 空间复杂度 O(1)
+时间复杂度 O(n), 空间复杂度 O(n), 使用O(n)空间存储哈希映射 定位根节点
+
+方法二：迭代
+时间复杂度 O(n), 空间复杂度 O(n), 其实是O(n+h), h是辅助栈的大小
+
+code
+方法一：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return build(preorder, inorder, 0, preorder.size()-1, 0, inorder.size()-1);
+    }
+    TreeNode* build(vector<int>& preorder, vector<int>& inorder, int l1, int r1, int l2, int r2){
+        if(l1 > r1){
+            return NULL;
+        }
+        if(l1 == r1){
+            return new TreeNode(preorder[l1]);
+        }
+        int x = preorder[l1];
+        int i;
+        for(i=l2; i<=r2; i++){ // 可以使用哈希映射，降低时间复杂度
+            if(inorder[i] == x){
+                break;
+            }
+        }
+        TreeNode* root = new TreeNode(x);
+        if(i-1-l2 >= 0){
+            int t = i-1-l2;
+            root->left = build(preorder, inorder, l1+1, l1+1+t, l2, l2+t);
+        }
+        if(r2-i-1 >= 0){
+            int t = r2-i-1;
+            root->right = build(preorder, inorder, r1-t, r1, r2-t, r2);
+        }
+        return root;
+    }
+};
+
+方法二：
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        if (!preorder.size()) {
+            return nullptr;
+        }
+        TreeNode* root = new TreeNode(preorder[0]);
+        stack<TreeNode*> stk;
+        stk.push(root);
+        int inorderIndex = 0;
+        for (int i = 1; i < preorder.size(); ++i) {
+            int preorderVal = preorder[i];
+            TreeNode* node = stk.top();
+            if (node->val != inorder[inorderIndex]) {
+                node->left = new TreeNode(preorderVal);
+                stk.push(node->left);
+            }
+            else {
+                while (!stk.empty() && stk.top()->val == inorder[inorderIndex]) {
+                    node = stk.top();
+                    stk.pop();
+                    ++inorderIndex;
+                }
+                node->right = new TreeNode(preorderVal);
+                stk.push(node->right);
+            }
+        }
+        return root;
+    }
+};
