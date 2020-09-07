@@ -1,0 +1,76 @@
+针对leetcode中一系列N皇后问题
+
+#52. N皇后 II
+
+n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+给定一个整数 n，返回 n 皇后不同的解决方案的数量。
+
+提示：
+皇后，是国际象棋中的棋子，意味着国王的妻子。皇后只做一件事，那就是“吃子”。当她遇见可以吃的棋子时，就迅速冲上去吃掉棋子。当然，她横、竖、斜都可走一或 N-1 步，可进可退。（引用自 百度百科 - 皇后 ）
+
+解法：
+方法一：搜索+剪枝，回溯
+
+方法二：使用 位运算 优化
+
+
+code：
+方法一：
+class Solution {
+public:
+    int totalNQueens(int n) {
+        vector<bool> col(n);
+        vector<bool> dia1(2*n);
+        vector<bool> dia2(2*n);
+        int ans = 0;
+        dfs(ans, n, 0, col, dia1, dia2);
+        return ans;
+    }
+    void dfs(int &ans, int n, int p, vector<bool> &col, vector<bool> &dia1, vector<bool> &dia2){
+        if(p >= n){
+            ans++;
+            return ;
+        }
+        for(int i=0; i<n; i++){
+            if(!col[i] && !dia1[i-p+n-1] && !dia2[i+p]){
+                col[i] = true;
+                dia1[i-p+n-1] = true;
+                dia2[i+p] = true;
+                dfs(ans, n, p+1, col, dia1, dia2);
+                // 回溯
+                col[i] = false;
+                dia1[i-p+n-1] = false;
+                dia2[i+p] = false;
+            }
+        }
+    }
+    
+方法二：
+   class Solution {
+   private int count = 0;
+    public int totalNQueens(int n) {
+        if (n < 1) return 0;
+        dfs(0,0,0,0,n);
+        return count;
+    }
+
+    private void dfs(int row, int col, int pie, int na,int n) {
+        if (row >= n) {
+            count++;
+            return;
+        }
+        int bit = (~(col | pie | na)) // 获取当前空位 标识为1 
+            & ((1<<n) - 1);  // 去掉所有高位
+        while (bit > 0){//遍历所有空位
+            int p = bit & -bit; //获取最后的空位 1
+            /**
+             col | p 表示 p 位被占用
+             (pie | p ) << 1 ,表示pie往斜左方移一位 被占用
+             (na | p) >> 1,表示na往斜右方移一位 被占用
+            **/
+            dfs(row + 1,col | p,(pie | p ) << 1,(na | p) >> 1,n);
+            bit &= (bit - 1); // 打掉最后的1
+        }
+    }
+}
+};
