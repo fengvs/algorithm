@@ -1,0 +1,58 @@
+#39. 组合总和
+
+给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+candidates 中的数字可以无限制重复被选取。
+说明：
+所有数字（包括 target）都是正整数。
+解集不能包含重复的组合。 
+
+示例 1：
+输入：candidates = [2,3,6,7], target = 7,
+所求解集为：
+[
+  [7],
+  [2,2,3]
+]
+
+解法：回溯算法+剪枝
+思路：画出树形图，分析如何去重》按顺序搜索，设置搜索起点
+      编码，回溯、dfs、递归
+      剪枝，前提是 候选数组先排序
+
+code：
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> cur;
+        // 排序，剪枝前提
+        sort(candidates.begin(), candidates.end());
+        dfs(ans, candidates, target, cur, 0, 0);
+        return ans;
+    }
+    /*
+    cur：当前搜索队列的元素
+    p：搜索起点（去重）
+    sum：当前搜索队列的元素和
+    */
+    void dfs(vector<vector<int>>& ans, vector<int>& cand, int target, vector<int> cur, int p, int sum){
+        if(sum > target){
+            return ;
+        }
+        if(sum == target){
+            ans.push_back(cur);
+            return ;
+        }
+        // 从p开始，去重
+        for(int i=p; i<cand.size(); i++){
+            // 剪枝
+            if(sum+cand[i] > target){
+                break;
+            }
+            cur.push_back(cand[i]);
+            dfs(ans, cand, target, cur, i, sum+cand[i]);
+            // 状态重置
+            cur.pop_back();
+        }
+    }
+};
