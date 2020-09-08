@@ -1,0 +1,112 @@
+#347. 前 K 个高频元素
+
+给定一个非空的整数数组，返回其中出现频率前 k 高的元素。
+示例 1:
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+
+提示：
+你可以假设给定的 k 总是合理的，且 1 ≤ k ≤ 数组中不相同的元素的个数。
+你的算法的时间复杂度必须优于 O(n log n) , n 是数组的大小。
+题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的。
+你可以按任意顺序返回答案。
+
+解法：
+方法一：哈希 + 最小堆
+哈希映射为频率-数字，维护大小为k的最小堆
+时间复杂度 O(n * log(k))
+空间复杂度 O(n)
+
+方法二：哈希 + 排序（快速排序）
+哈希映射为频率-数字，按照频率排序
+时间复杂度 O(n * log(n))
+空间复杂度 O(n)
+
+方法三：哈希 + 桶排序
+哈希映射为频率-数字，使用大小为n的桶，按频率映射到桶中
+时间复杂度 O(n)
+空间复杂度 O(n)
+
+附加：
+桶排序是计数排序的升级版。它利用了函数的映射关系，高效与否的关键就在于这个映射函数的确定。为了使桶排序更加高效，我们需要做到这两点：
+1.在额外空间充足的情况下，尽量增大桶的数量
+2.使用的映射函数能够将输入的 N 个数据均匀的分配到 K 个桶中
+同时，对于桶中元素的排序，选择何种比较排序算法对于性能的影响至关重要。
+
+code：
+方法一：
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        vector<int> ans;
+        unordered_map<int, int> mp;
+        using pii = pair<int, int>;
+        priority_queue<pii, vector<pii>, greater<pii>> pq;
+        for(auto x : nums){
+            mp[x]++;
+        }
+        for(auto t : mp){
+            pq.push(pair<int,int>(t.second, t.first));
+            if(pq.size() > k){
+                pq.pop();
+            }
+        }
+        while(k--){
+            ans.push_back(pq.top().second);
+            pq.pop();
+        }
+        return ans;
+    }
+};
+
+方法二：
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        vector<int> ans;
+        unordered_map<int, int> mp;
+        using pii = pair<int, int>;
+        vector<pii> v;
+        for(auto x : nums){
+            mp[x]++;
+        }
+        for(auto t : mp){
+            v.push_back(pair<int,int>(t.second, t.first));
+        }
+        sort(v.begin(), v.end(), greater<pii>());
+        for(int i=0; i<k; i++){
+            ans.push_back(v[i].second);
+        }
+        return ans;
+    }
+};
+
+方法三：
+class Solution {
+public:
+    // 桶排序
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        vector<int> ans;
+        unordered_map<int, int> mp;
+        using pii = pair<int, int>;
+        vector<int> v[nums.size()+1];
+        for(auto x : nums){
+            mp[x]++;
+        }
+        for(auto t : mp){
+            v[t.second].push_back(t.first);
+        }
+        for(int i=nums.size(); i>=0; i--){
+            if(v[i].size() > 0){
+                for(auto x : v[i]){
+                    ans.push_back(x);
+                    k--;
+                }
+            }
+            if(k == 0){
+                break;
+            }
+        }
+        return ans;
+    }
+};
