@@ -1,0 +1,96 @@
+#10. 正则表达式匹配
+难度：困难
+
+给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+'.' 匹配任意单个字符
+'*' 匹配零个或多个前面的那一个元素
+所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+
+说明:
+s 可能为空，且只包含从 a-z 的小写字母。
+p 可能为空，且只包含从 a-z 的小写字母，以及字符 . 和 *。
+
+示例 4:
+输入:
+s = "aab"
+p = "c*a*b"
+输出: true
+解释: 因为 '*' 表示零个或多个，这里 'c' 为 0 个, 'a' 被重复一次。因此可以匹配字符串 "aab"。
+
+解法：
+方法一：动态规划 + 递归
+动态规划的思想，使用递归实现
+
+方法二：动态规划 + 迭代
+主要考虑 * 的状态转移
+            if p[j]!='*'  =| f[i-1][j-1] , matches(s[i], p[j])
+f[i][j] =                  | false,        otherwise
+            otherwise  =| f[i-1][j] or f[i][j-2],  matches(s[i], p[j])
+                        | f[i][j-2], otherwise
+
+code:
+方法一：
+class Solution {
+public:
+    bool flag;
+    bool isMatch(string s, string p) {
+        flag = false;
+        dfs(s, p, 0, 0);
+        return flag;
+    }
+    void dfs(string &s, string &p, int si, int pi){ // 不加引用& 会超时
+        if(flag){
+            return ;
+        }
+        if(si==s.size() && pi==p.size()){
+            flag = true;
+            return ;
+        }
+        if(pi<p.size()-1 && p[pi+1] == '*'){
+            dfs(s, p, si, pi+2); // * 匹配0次
+            if(si<s.size() && (s[si]==p[pi] || p[pi]=='.')){
+                dfs(s, p, si+1, pi); // * 匹配1...
+            }
+        }else if(si<s.size() && (s[si] == p[pi] || p[pi] == '.')){
+            dfs(s, p, si+1, pi+1);
+        }
+    }
+};
+
+方法二：
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int m = s.size();
+        int n = p.size();
+
+        auto matches = [&](int i, int j) {
+            if (i == 0) {
+                return false;
+            }
+            if (p[j - 1] == '.') {
+                return true;
+            }
+            return s[i - 1] == p[j - 1];
+        };
+
+        vector<vector<int>> f(m + 1, vector<int>(n + 1));
+        f[0][0] = true;
+        for (int i = 0; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                if (p[j - 1] == '*') {
+                    f[i][j] |= f[i][j - 2];
+                    if (matches(i, j - 1)) {
+                        f[i][j] |= f[i - 1][j];
+                    }
+                }
+                else {
+                    if (matches(i, j)) {
+                        f[i][j] |= f[i - 1][j - 1];
+                    }
+                }
+            }
+        }
+        return f[m][n];
+    }
+};
