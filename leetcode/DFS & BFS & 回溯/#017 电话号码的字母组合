@@ -1,0 +1,64 @@
+#17. 电话号码的字母组合
+难度：中等
+
+给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+2->"abc", 3->"def",..., 7->"pqrs", 8->"tuv", 9->"wxyz"
+
+示例:
+输入："23"
+输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+
+解法：
+方法一：DFS + 回溯
+时间复杂度 O(3^n * 4^m)
+空间复杂度 O(3^n * 4^m)
+
+方法二：队列
+使用队列，先将第一个数字对应的所有字母入队，然后将所有队列内的元素出队并于下一个数字对应的字母组合，再入队，
+直至遍历完所有数字，队列中的元素即为所求结果。
+
+code：
+方法一：
+class Solution {
+public:
+    string str = "abcdefghijklmnopqrstuvwxyz";
+    vector<string> letterCombinations(string digits) {
+        if(digits.size() == 0){
+            return {};
+        }
+        vector<string> ans;
+        dfs(ans, digits, digits.size(), 0, "");
+        return ans;
+    }
+    void dfs(vector<string> &ans, string digits, int n, int p, string s){
+        if(p == n){
+            ans.push_back(s);
+            return ;
+        }
+        int l = (int)(digits[p]-'2') * 3;
+        if(digits[p] > '7'){
+            l++;
+        }
+        int r = l+3;
+        if(digits[p] == '7' || digits[p] == '9'){
+            r = l+4;
+        }
+        for(int i=l; i<r; i++){
+            dfs(ans, digits, n, p+1, s+str[i]);
+        }
+    }
+};
+
+方法二：
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits: return []
+        phone = ['abc','def','ghi','jkl','mno','pqrs','tuv','wxyz']
+        queue = ['']  # 初始化队列
+        for digit in digits:
+            for _ in range(len(queue)):
+                tmp = queue.pop(0)
+                for letter in phone[ord(digit)-50]:# 这里我们不使用 int() 转换字符串，使用ASCII码
+                    queue.append(tmp + letter)
+        return queue
