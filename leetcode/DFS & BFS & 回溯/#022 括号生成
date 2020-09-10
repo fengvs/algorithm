@@ -1,0 +1,46 @@
+#22. 括号生成
+难度：中等
+
+数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+示例：
+输入：n = 3
+输出：[
+       "((()))",
+       "(()())",
+       "(())()",
+       "()(())",
+       "()()()"
+     ]
+
+解法：
+方法一：DFS + 回溯
+每个状态s搜索时有两条路：
+1.左括号小于n时，可以转移到 s+'('
+2.右括号小于左括号时，可以转移到 s+')'
+这样搜索，便不需要剪枝，每条路都可走到终点
+
+
+code:
+方法一：
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> ans;
+        dfs(ans, n, 0, 0, "");
+        return ans;
+    }
+    void dfs(vector<string> &ans, int n, int l, int r, string s){
+        if(r == n){
+            ans.push_back(s);
+        }
+        if(l < n){
+            dfs(ans, n, l+1, r, s+"(");
+        }
+        if(r < l){
+            dfs(ans, n, l, r+1, s+")");
+        }
+        return ;
+    }
+};
+执行用时：0 ms, 在所有 C++ 提交中击败了100.00%的用户
+内存消耗：15 MB, 在所有 C++ 提交中击败了57.80%的用户
