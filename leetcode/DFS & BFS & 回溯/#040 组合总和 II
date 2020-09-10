@@ -1,0 +1,61 @@
+#40. 组合总和 II
+难度：中等
+
+给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+candidates 中的每个数字在每个组合中只能使用一次。
+说明：
+所有数字（包括目标数）都是正整数。
+解集不能包含重复的组合。 
+
+示例 1:
+输入: candidates = [10,1,2,7,6,1,5], target = 8,
+所求解集为:
+[
+  [1, 7],
+  [1, 2, 5],
+  [2, 6],
+  [1, 1, 6]
+]
+
+解法：
+方法一：回溯 + 剪枝
+与39题区别：1.每个数字只用一次；2.解集不能有重复组合。具体可以从代码中体会
+优化：先对数组排序，从而可以在搜索中剪枝
+时间复杂度 O(2^n * n)
+空间复杂度 O(n)。除了存储答案的数组外，我们需要O(n) 的空间存储列表freq、递归中存储当前选择的数的列表、以及递归需要的栈。
+
+
+code：
+方法一：
+class Solution {
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        sort(candidates.begin(), candidates.end()); // 优化前提
+        vector<int> cur;
+        dfs(ans, candidates, target, 0, 0, cur);
+        return ans;
+    }
+    void dfs(vector<vector<int>> &ans, vector<int> &candidates, int target, int sum, int p, vector<int> &cur){
+        if(sum == target){
+            ans.push_back(cur);
+            return ;
+        }
+        if(sum > target || p >= candidates.size()){
+            return ;
+        }
+        for(int i=p; i<candidates.size(); i++){
+            if(sum + candidates[i] > target){
+                break; // 剪枝 优化，前提：数组已排序
+            }
+            if(i>p && candidates[i]==candidates[i-1]){ // 去掉重复组合，i>p 重点(不是i>0)
+                continue;
+            }
+            cur.push_back(candidates[i]);
+            dfs(ans, candidates, target, sum+candidates[i], i+1, cur); // p = i+1, 每个数字只用一次
+            cur.pop_back();
+        }
+    }
+};
+执行用时：8 ms, 在所有 C++ 提交中击败了78.09%的用户
+内存消耗：7 MB, 在所有 C++ 提交中击败了96.50%的用户
