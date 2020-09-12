@@ -1,0 +1,46 @@
+#78. 子集
+难度：中等
+
+给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+说明：解集不能包含重复的子集。
+示例:
+输入: nums = [1,2,3]
+输出:
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+
+解法：
+全排列：N！
+组合：N！
+子集：2^n
+常用解法：递归，回溯，二进制数映射
+
+code：
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> ans;
+        vector<int> cur;
+        dfs(ans, nums, 0, cur);
+        return ans;
+    }
+    void dfs(vector<vector<int>>& ans, vector<int>& nums, int p, vector<int>& cur){
+        if(p >= nums.size()){
+            ans.push_back(cur);
+            return ;
+        }
+        dfs(ans, nums, p+1, cur);
+        
+        cur.push_back(nums[p]);
+        dfs(ans, nums, p+1, cur);
+        cur.pop_back();
+    }
+};
