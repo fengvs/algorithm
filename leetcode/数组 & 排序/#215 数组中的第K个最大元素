@@ -1,0 +1,154 @@
+#215. 数组中的第K个最大元素
+
+在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+示例 1:
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+
+解法：
+方法一：最小堆（适合处理海量数据）
+维护一个大小为k的最小堆
+时间复杂度 O(n * log(k))
+空间复杂度 O(k)
+
+方法二：快速排序--partition
+利用快速排序中 partition方法》划分数组》在其中一个里找第k个最大元素
+时间复杂度 O(n)
+空间复杂度 O(log(n))
+
+
+
+code：
+方法一：
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int, vector<int>, greater<int>> pq;
+        for(int i=0; i<nums.size(); i++){
+            if(i < k){
+                pq.push(nums[i]);
+            }else if(pq.top() < nums[i]){
+                pq.pop();
+                pq.push(nums[i]);
+            }
+        }
+        return pq.top();
+    }
+};
+
+方法二：
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        /*
+        fastSort(nums, 0, nums.size()-1);
+        for(int i=0; i<nums.size(); i++){
+            cout<<nums[i]<<" ";
+        }
+        */
+        return fastSort(nums, 0, nums.size()-1, k);
+    }
+    int fastSort(vector<int>& nums, int l, int r, int k){
+        int p = partition(nums, l, r);
+        // 找第k大元素
+        if(p == r-k+1){
+            return nums[p];
+        }
+        if(p < r-k+1){
+            return fastSort(nums, p+1, r, k);
+        }else{
+            return fastSort(nums, l, p-1, k-(r-p+1));
+        }
+        /* 排序
+        if(l < p-1){
+            fastSort(nums, l, p-1);
+        }
+        if(p+1 < r){
+            fastSort(nums, p+1, r);
+        }
+        */
+    }
+    // 以nums[l] 划分数组
+    int partition(vector<int>& nums, int l, int r){
+        int x = nums[l];
+        int p = l++;
+        while(l <= r){
+            while(r >= l){
+                if(nums[r] < x){
+                    nums[p] = nums[r];
+                    p = r;
+                    r--;
+                    break;
+                }
+                r--;
+            }
+            while(l <= r){
+                if(nums[l] > x){
+                    nums[p] = nums[l];
+                    p = l;
+                    l++;
+                    break;
+                }
+                l++;
+            }
+        }
+        nums[p] = x;
+        return p;
+    }
+};
+简化：
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        return fastSort(nums, 0, nums.size()-1, k);
+    }
+    int fastSort(vector<int>& nums, int l, int r, int k){
+        int p = partition(nums, l, r);
+        if(p == r-k+1){
+            return nums[p];
+        }
+        if(p < r-k+1){
+            return fastSort(nums, p+1, r, k);
+        }else{
+            return fastSort(nums, l, p-1, k-(r-p+1));
+        }
+    }
+    // 以nums[l] 划分数组
+    int partition(vector<int>& nums, int l, int r){
+        int x = nums[l];
+        int p = l;
+        for(int i=l+1; i<=r; i++){
+            if(nums[i] < x){
+                nums[p] = nums[p+1];
+                swap(nums[i], nums[p++]);
+            }
+        }
+        nums[p] = x;
+        return p;
+    }
+};
+
+附加：快速排序
+    int quickSort(vector<int>& nums, int l, int r){
+        int p = partition(nums, l, r);
+        if(l < p-1){
+            quickSort(nums, l, p-1);
+        }
+        if(p+1 < r){
+            quickSort(nums, p+1, r);
+        }
+    }
+    // 以nums[l] 划分数组
+    int partition(vector<int>& nums, int l, int r){
+        int x = nums[l];
+        int p = l;
+        for(int i=l+1; i<=r; i++){
+            if(nums[i] < x){
+                nums[p] = nums[p+1];
+                swap(nums[i], nums[p++]);
+            }
+        }
+        nums[p] = x;
+        return p;
+    }
