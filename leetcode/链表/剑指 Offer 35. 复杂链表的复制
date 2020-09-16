@@ -1,0 +1,72 @@
+剑指 Offer 35. 复杂链表的复制
+难度：中等
+
+请实现 copyRandomList 函数，复制一个复杂链表。在复杂链表中，每个节点除了有一个 next 指针指向下一个节点，还有一个 random 指针指向链表中的任意节点或者 null。
+
+示例 1：
+输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+输出：[[7,null],[13,0],[11,4],[10,2],[1,0]]
+
+解法：
+方法一：技巧
+分三步：
+1.在原链表的每个节点后复制一个节点（复制了 val, next）
+2.复制random指针
+3.拆分，按奇偶拆分成原链表和复制链表
+时间复杂度 O(N)
+空间复杂度 O(1)
+
+
+code:
+方法一：
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+*/
+class Solution {
+public:
+    // 复制：原链表每个节点后复制一个一样的节点
+    // 拆分：奇数拆分为原链表，偶数为复制链表
+    Node* copyRandomList(Node* head) {
+        if(head == NULL){
+            return NULL;
+        }
+        // 复制：val, *next
+        Node *h = head;
+        while(h != NULL){
+            Node *h_copy = new Node(h->val);
+            h_copy->next = h->next;
+            h->next = h_copy;
+            h = h->next->next;
+        }
+        // 复制：random
+        h = head;
+        while(h != NULL){
+            h->next->random = h->random==NULL ? NULL : h->random->next;
+            h = h->next->next;
+        }
+        // 拆分：按奇偶
+        h = head;
+        Node* new_head = new Node(0);
+        new_head->next = h->next;
+        Node *h_copy = h->next;
+        while(h != NULL){
+            h->next = h->next->next;
+            h_copy->next = h_copy->next==NULL ? NULL : h_copy->next->next;
+            h = h->next;
+            h_copy = h_copy->next;
+        }
+        return new_head->next;
+    }
+};
