@@ -1,0 +1,46 @@
+并查集
+// 初始化
+vector<int> fa;
+void init(int n){
+    for(int i=0; i<n; i++){
+        fa.push_back(i);
+    }
+}
+// 查找父节点
+int find(int x){
+    return x == fa[x] ? x : find(fa[x]);
+}
+// 合并两个集合
+void merge(int x, int y){
+    int fa_x = find(x);
+    fa[find(y)] = fa_x;
+}
+
+
+// 优化
+1. 路径压缩
+int find(int x){
+    return x == fa[x] ? x : (fa[x]=find(fa[x]));
+}
+2. 按秩合并
+即将简单的树往复杂的树上合并。这样合并后，到根节点距离变长的节点个数比较少。
+// 初始化
+inline void init(int n)
+{
+    for (int i = 1; i <= n; ++i)
+    {
+        fa[i] = i;
+        rank[i] = 1;
+    }
+}
+// 合并--按秩合并
+inline void merge(int i, int j)
+{
+    int x = find(i), y = find(j);    //先找到两个根节点
+    if (rank[x] <= rank[y])
+        fa[x] = y;
+    else
+        fa[y] = x;
+    if (rank[x] == rank[y] && x != y)
+        rank[y]++;                   //如果深度相同且根节点不同，则新的根节点的深度+1
+}
