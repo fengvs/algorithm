@@ -28,7 +28,7 @@ public:
             for(int i=m; i>=0; i--){  // 注意可以等0
                 for(int j=n; j>=0; j--){ // 只用一次，倒序
                     int x_m=0, x_n=0;
-                    for(int p=0; p<strs[k].size(); p++){
+                    for(int p=0; p<strs[k].size(); p++){ // 这部分，可在外面计算好，使用数组保存，可优化时间
                         if(strs[k][p] == '0'){
                             x_m++;
                         }else{
