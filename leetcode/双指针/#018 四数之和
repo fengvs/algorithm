@@ -1,0 +1,68 @@
+#18. 四数之和
+难度：中等
+
+给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。
+注意：
+答案中不可以包含重复的四元组。
+
+示例：
+给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。
+满足要求的四元组集合为：
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+
+解法：
+方法一：排序+双指针
+双指针可以去掉一层循环，时间复杂度降为 O(n*3)
+去重：让每层循环中的值都与前一个值不同
+时间复杂度 O(n*3)
+空间复杂度 O(log(n)),（排序所需要的辅助空间，此外排序修改了原数组，若不允许，则要使用O(n)的空间复制数组）
+
+方法二：搜索
+
+
+code：
+方法一：
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> ans;
+        int n = nums.size();
+        if(n < 4){
+            return ans;
+        }
+        sort(nums.begin(), nums.end());
+        int x = 0;
+        for(int i=0; i<n; i++){
+            while(i>0 && i+1<n && nums[i]==nums[i-1]){ // 去重
+                i++;
+            }
+            for(int j=i+1; j<n; j++){
+                while(j>i+1 && j+1<n && nums[j]==nums[j-1]){ // 去重
+                    j++;
+                }
+                x = nums[i] + nums[j];
+                int l=j+1, r=n-1;
+                while(l < r){  // 双指针，去掉一层循环
+                    int t = x + nums[l] + nums[r];
+                    if(t == target){
+                        ans.push_back({nums[i], nums[j], nums[l], nums[r]});
+                        l++;
+                        while(l<r && nums[l]==nums[l-1]){ // 去重
+                            l++;
+                        }
+                        r--;
+                    }else if(t < target){
+                        l++;
+                    }else{
+                        r--;
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
