@@ -10,27 +10,33 @@
 输入: [2,0,2,1,1,0]
 输出: [0,0,1,1,2,2]
 
-解法：双指针
-实际上原地修改、O(n)正是双指针的特性。
-利用双指针代表0的右边界和2的左边界，将数组划分为三个区域：全0，未知，全2
+解法：
+方法一：排序
+
+方法二：两趟扫描
+扫描一遍计算0 1 2的个数，然后重写数组
+
+方法三：一趟扫描--双指针
+定义双指针l和r，分别代表0的右边界 和 2的左边界
 时间复杂度 O(n), 空间复杂度 O(1)
 
 code：
+方法三：
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
         int l=0, r=nums.size()-1;
-        int cur = 0;
-        while(cur <= r){
-            if(nums[cur] == 2){
-                swap(nums[cur], nums[r]);
-                r--;
-            }else if(nums[cur] == 0){
-                swap(nums[cur], nums[l]);
+        int p = 0;
+        while(p <= r){
+            if(nums[p] == 0){
+                swap(nums[l], nums[p]);
                 l++;
-                cur++;
+                p++;
+            }else if(nums[p] == 2){
+                swap(nums[p], nums[r]);
+                r--;
             }else{
-                cur++;
+                p++;
             }
         }
     }
