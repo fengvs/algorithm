@@ -1,0 +1,35 @@
+349. 两个数组的交集
+难度：简单
+
+给定两个数组，编写一个函数来计算它们的交集。
+示例 1：
+输入：nums1 = [1,2,2,1], nums2 = [2,2]
+输出：[2]
+
+解法：
+方法一：哈希
+**code实现，从set中移除元素来保证不重复
+
+方法二：排序+双指针
+
+方法三：排序+二分
+
+code：
+方法一：
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> ans;
+        unordered_set<int> st;
+        for(auto x : nums1){
+            st.insert(x);
+        }
+        for(auto x : nums2){
+            if(st.find(x) != st.end()){
+                ans.push_back(x);
+                st.erase(x);  // 保证结果不重复
+            }
+        }
+        return ans;
+    }
+};
