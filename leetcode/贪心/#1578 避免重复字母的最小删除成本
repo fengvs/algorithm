@@ -1,0 +1,39 @@
+1578. 避免重复字母的最小删除成本
+难度：中等
+
+给你一个字符串 s 和一个整数数组 cost ，其中 cost[i] 是从 s 中删除字符 i 的代价。
+返回使字符串任意相邻两个字母不相同的最小删除成本。
+请注意，删除一个字符后，删除其他字符的成本不会改变。
+
+示例 3：
+输入：s = "aabaa", cost = [1,2,3,4,1]
+输出：2
+解释：删除第一个和最后一个字母，得到字符串 ("aba") 。
+
+解法：
+方法一：贪心
+对每个重复序列中 保留cost最大的，剩余删除
+
+code：
+方法一：
+class Solution {
+public:
+    // 找到所有连续重复字母的序列，保留一个cost最大的，剩余删除
+    int minCost(string s, vector<int>& cost) {
+        int ans = 0;
+        int len = s.size();
+        for(int i=1; i<len; i++){
+            if(s[i] == s[i-1]){
+                int mx_cost = max(cost[i-1], cost[i]); // 记录序列中cost最大的
+                ans += cost[i-1] + cost[i];
+                while(i+1<len && s[i+1]==s[i]){  // 找到该重复序列
+                    i++;
+                    ans += cost[i];
+                    mx_cost = max(mx_cost, cost[i]);
+                }
+                ans -= mx_cost;
+            }
+        }
+        return ans;
+    }
+};
