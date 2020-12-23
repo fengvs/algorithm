@@ -1,0 +1,49 @@
+面试题 04.01. 节点间通路
+难度：中等
+
+节点间通路。给定有向图，设计一个算法，找出两个节点之间是否存在一条路径。
+
+示例1:
+ 输入：n = 3, graph = [[0, 1], [0, 2], [1, 2], [1, 2]], start = 0, target = 2
+ 输出：true
+
+提示：
+节点数量n在[0, 1e5]范围内。
+节点编号大于等于 0 小于 n。
+图中可能存在自环和平行边。
+
+解法：搜索
+方法一：BFS
+BFS：构造邻接表 -> BFS （该方法无需考虑自环）
+
+code：
+方法一：
+class Solution {
+public:
+    bool findWhetherExistsPath(int n, vector<vector<int>>& graph, int start, int target) {
+        vector<int> mp[n];
+        for(int i=0; i<graph.size(); i++){
+            mp[graph[i][0]].push_back(graph[i][1]);
+            //mp[graph[i][1]].push_back(graph[i][0]); // 无向图
+        }
+        bool vis[n];
+        memset(vis, 0, sizeof(vis));
+        queue<int> q;   // 队列存储 遍历到的元素
+        q.push(start);
+        vis[start] = true;
+        while(!q.empty()){
+            int x = q.front();
+            q.pop();
+            for(int i=0; i<mp[x].size(); i++){
+                if(!vis[mp[x][i]]){
+                    if(mp[x][i] == target){  // 找到target
+                        return true;
+                    }
+                    q.push(mp[x][i]);
+                    vis[mp[x][i]] = true;
+                }
+            }
+        }
+        return false;
+    }
+};
